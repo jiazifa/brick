@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "brick"
+version = "0.1.0"
+description = ""
+authors = ["sunshukang <sunshukang@top-stack.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+click = "^8.0.1"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.812"
+yapf = "^0.31.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "tsinghua"
+default = true
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
