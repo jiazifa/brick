@@ -5,7 +5,7 @@ def home_path() -> str:
     home: Union[str, None] = os.environ.get("HOME")
     if not home:
         return ''
-    app_home = os.path.join(home, '.zdpn')
+    app_home = os.path.join(home, '.brick')
     return app_home
 
 

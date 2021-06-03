@@ -42,6 +42,6 @@ class PluginItem:
             command += " "
         command += " ".join(args)
 
-        print(command)
+        print("【debug】at redirect_command:: {}".format(command))
         execute_command(command)
         return True

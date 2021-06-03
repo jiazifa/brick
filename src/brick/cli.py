@@ -1,18 +1,17 @@
 import os
 import sys
+import json
 from typing import Dict, List
 import click
-from brick import plugin_path, config_path, PluginItem
+from brick import plugin_path, config_path, alert_toast, error_toast
+from .plugin import PluginItem
 
 plugins: List[PluginItem] = []
 
 def load_config_if_could(config_path: str) -> Dict[str, str]:
     result: Dict[str, str] = {}
     with open(config_path, mode="r", encoding="utf-8") as f:
-        for line in f.readlines():
-            items: List[str] = line.split("=")
-            if len(items) <= 1: continue
-            result.setdefault(items[0], "".join(items[1:]).strip())
+        result = json.load(f)
     
     result.setdefault("bk.config.path", config_path)
     return result
@@ -39,6 +38,26 @@ def register_plugins():
         break
 
 
+def perpare_env():
+
+    c_path = config_path()
+    if not os.path.exists(c_path):
+        error_toast("配置文件不能为空: {}".format(c_path))
+    
+
+def echo_help():
+    info: str = ""
+    info += """
+Brick Command Tool
+
+目前可用插件：
+    """
+    for plugin in plugins:
+        info += "\n"
+        info += "\t".join([plugin.name or "", plugin.description or ""])
+        info += "\n"
+    alert_toast(info)
+
 @click.group()
 def cli():
     pass
@@ -46,8 +65,12 @@ def cli():
 
 def main() -> None:
     global plugins
+    perpare_env()
     register_plugins()
     args = sys.argv
+    if len(args) <= 1:
+        echo_help()
+        return
     command = args[1]
 
     target_plugins = [p for p in plugins if p.name == command]

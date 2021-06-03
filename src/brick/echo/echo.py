@@ -27,7 +27,7 @@ def _alert(content: str):
     _log(color, content)
 
 
-def _wraning(content: str):
+def _warning(content: str):
     color = Color.YELOW
     _log(color, content)
 
