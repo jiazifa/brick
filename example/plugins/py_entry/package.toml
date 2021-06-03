@@ -1,0 +1,13 @@
+[package]
+name = "shell" # 用于声明插件的名称
+description = """
+    插件的功能描述，也可以是相关使用的教程
+    也支持多行显示
+"""
+version = "0.1.0" # 版本
+authors = ["author_name <author@email.com>"]
+
+[shell]
+# command = "python3" # 如果是执行 python 脚本，指定解析器即可
+# 入口文件
+index = "index.py" # 入口文件
