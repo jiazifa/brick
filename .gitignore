@@ -23,3 +23,6 @@ htmlcov/
 .coverage
 .coverage.*
 *,cover
+config
+.bk_config
+plugins/

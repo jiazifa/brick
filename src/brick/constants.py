@@ -19,7 +19,11 @@ def hooks_path() -> str:
     p = os.path.join(home, "hooks")
     return p
 
-def config_path() -> str:
+def config_path_at_home() -> str:
     home = home_path()
-    p = os.path.join(home, "config")
+    p = os.path.join(home, ".bk_config")
+    return p
+
+def config_path_at_current_dir(path: str) -> str:
+    p = os.path.join(path, ".bk_config")
     return p

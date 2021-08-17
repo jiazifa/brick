@@ -3,17 +3,18 @@ import sys
 import json
 from typing import Dict, List
 import click
-from brick import plugin_path, config_path, alert_toast, error_toast
+from brick import plugin_path, config_path_at_current_dir, config_path_at_home, alert_toast, error_toast
 from .plugin import PluginItem
 
 plugins: List[PluginItem] = []
 
 def load_config_if_could(config_path: str) -> Dict[str, str]:
     result: Dict[str, str] = {}
+    if not os.path.exists(config_path):
+        return result
     with open(config_path, mode="r", encoding="utf-8") as f:
         result = json.load(f)
     
-    result.setdefault("bk.config.path", config_path)
     return result
 
 def register_plugin_item(path: str) -> bool:
@@ -39,10 +40,7 @@ def register_plugins():
 
 
 def perpare_env():
-
-    c_path = config_path()
-    if not os.path.exists(c_path):
-        error_toast("配置文件不能为空: {}".format(c_path))
+    ...
     
 
 def echo_help():
@@ -72,11 +70,14 @@ def main() -> None:
         echo_help()
         return
     command = args[1]
-
     target_plugins = [p for p in plugins if p.name == command]
     if len(target_plugins) > 0:
-        c_path = config_path()
+        # 优先加载本地配置
+        c_path = config_path_at_current_dir(os.getcwd())
         config = load_config_if_could(c_path)
+        h_path = config_path_at_home()
+        # 全局配置兜底
+        config.update(load_config_if_could(h_path))
         target_plugins[0].redirect_command(args[2:], config)
     else:
         cli()
