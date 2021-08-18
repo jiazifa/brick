@@ -3,7 +3,7 @@ import sys
 import json
 from typing import Dict, List
 import click
-from brick import plugin_path, config_path_at_current_dir, config_path_at_home, alert_toast, error_toast
+from brick import plugin_path, config_path_at_current_dir, config_path_at_home, alert_toast, error_toast, config_path_at_current_dir
 from .plugin import PluginItem
 
 plugins: List[PluginItem] = []
@@ -39,8 +39,18 @@ def register_plugins():
         break
 
 
-def perpare_env():
-    ...
+def perpare_env() -> Dict[str, str]:
+    # 准备环境变量，只负责读取规则内的文件变量
+    curdir: str =  os.getcwd()
+    splited: List[str] = curdir.split(os.sep)
+    path: str = "/"
+    config_dic: Dict[str, str] = {}
+    for folder in splited:
+        path = os.path.join(path, folder)
+        config_path: str = config_path_at_current_dir(path)
+        temp: Dict[str, str] = load_config_if_could(config_path)
+        config_dic.update(temp)
+    return config_dic
     
 
 def echo_help():
@@ -63,7 +73,7 @@ def cli():
 
 def main() -> None:
     global plugins
-    perpare_env()
+    
     register_plugins()
     args = sys.argv
     if len(args) <= 1:
@@ -71,16 +81,18 @@ def main() -> None:
         return
     command = args[1]
     target_plugins = [p for p in plugins if p.name == command]
-    if len(target_plugins) > 0:
-        # 优先加载本地配置
-        c_path = config_path_at_current_dir(os.getcwd())
-        config = load_config_if_could(c_path)
-        h_path = config_path_at_home()
-        # 全局配置兜底
-        config.update(load_config_if_could(h_path))
-        target_plugins[0].redirect_command(args[2:], config)
-    else:
+    if len(target_plugins) == 0:
         cli()
+        return
+        
+    # 优先加载本地配置
+    config: Dict[str, str] = {}
+    h_path = config_path_at_home()
+    # 全局配置兜底
+    config.update(load_config_if_could(h_path))
+    cur_env = perpare_env()
+    config.update(cur_env)
+    target_plugins[0].redirect_command(args[2:], config)
 
 
 if __name__ == "__main__":
