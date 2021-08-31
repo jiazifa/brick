@@ -8,7 +8,15 @@
 
 ### 安装
 
+- 通过pip安装
  通过 `pip install git+https://github.com/jiazifa/brick.git`  安装到本机
+
+- 本地安装
+`git clone https://github.com/jiazifa/brick.git ~/.brick`
+
+`cd ~/.brick`
+
+`python setup.py install`
 
 
 ### 配置插件
